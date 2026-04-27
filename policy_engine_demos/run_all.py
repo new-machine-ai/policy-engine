@@ -81,8 +81,8 @@ def _load_demos():
         ),
         (
             "claude",
-            "Claude Agent SDK — make_user_prompt_hook",
-            "Seam: HookMatcher with a closure over POLICY.",
+            "Claude Agent SDK — full agent loop with UserPromptSubmit + PreToolUse + PostToolUse",
+            "Seam: HookMatcher closures over a shared BaseKernel; multi-turn ClaudeSDKClient with resume + fork.",
             claude_main,
         ),
     ]

@@ -63,7 +63,7 @@ The package implements one shape of runtime governance — *prompt-pattern block
 | Pattern | Adapter | What it ships |
 |---|---|---|
 | Method-proxy wrap | `openai_assistants.OpenAIKernel.wrap(assistant, client)`, `pydantic_ai.PydanticAIKernel.wrap(agent)`, `openai_agents.OpenAIAgentsKernel.wrap_runner(Runner)` | A wrapper class whose entry-point methods call `pre_execute` before delegating. |
-| Hook/middleware factory | `claude.make_user_prompt_hook(policy)`, `maf.create_governance_middleware(...)` | A closure or list the framework's own hook system runs. No kernel object needed. |
+| Hook/middleware factory | `claude.make_user_prompt_hook(policy)`, `claude.make_pre_tool_use_hook(policy)`, `claude.make_post_tool_use_hook(policy)`, `maf.create_governance_middleware(...)` | A closure or list the framework's own hook system runs. No kernel object needed. The Claude factories accept optional shared `kernel`/`ctx` so all three hooks share `max_tool_calls` accounting. |
 | Bare kernel | `langchain.LangChainKernel`, `crewai.CrewAIKernel` | Just `BaseKernel` re-exported under a `framework` name. The *demo* writes the framework hook (`pre_model_hook`, `@before_llm_call`) and calls `kernel.pre_execute` itself. |
 | Backend bridge | `agent_os.AgentOSKernel`, `agent_os.to_agent_os_policy(...)` | A `BaseKernel`-compatible facade that lazily loads Agent-OS `PolicyInterceptor` and preserves local `PolicyDecision` output. |
 
