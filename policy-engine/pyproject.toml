@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "policy-engine"
+version = "0.1.0"
+description = "Bare-bones runtime policy engine for popular agent frameworks. Pure stdlib core."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Agent Governance Toolkit" }]
+dependencies = []
+
+[project.optional-dependencies]
+maf = ["agent-framework"]
+openai = ["openai>=1.0"]
+openai-agents = ["openai-agents"]
+langchain = ["langchain-core", "langchain-openai", "langgraph"]
+crewai = ["crewai"]
+pydantic-ai = ["pydantic-ai"]
+claude = ["claude-agent-sdk"]
+agent-os = ["agent-os-kernel>=3.2.2,<4"]
+all = [
+    "agent-framework",
+    "openai>=1.0",
+    "openai-agents",
+    "langchain-core",
+    "langchain-openai",
+    "langgraph",
+    "crewai",
+    "pydantic-ai",
+    "claude-agent-sdk",
+    "agent-os-kernel>=3.2.2,<4",
+]
+test = ["pytest>=7.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
