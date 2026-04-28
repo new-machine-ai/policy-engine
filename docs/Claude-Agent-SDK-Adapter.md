@@ -35,6 +35,25 @@ async for msg in query(prompt="Say hello.", options=opts):
 | `{"hookSpecificOutput": {"hookEventName": "UserPromptSubmit", "permissionDecision": "deny", "permissionDecisionReason": "..."}}` | deny |
 | `{"hookSpecificOutput": {... "permissionDecision": "ask", ...}}` | escalate to human |
 
+## Available factories
+
+Ten factories, one per Python-supported SDK event. All accept the same kwargs `(policy, *, kernel=None, ctx=None)` so callers can opt into shared `BaseKernel` + `ExecutionContext` state across hooks (the `claude_governed.py` demo does this — see [[Claude-Agent-SDK-Full-Demo]]).
+
+| Factory | SDK event | Calls `kernel.evaluate`? | Return shape |
+|---|---|---|---|
+| `make_user_prompt_hook` | `UserPromptSubmit` | yes | `{}` (allow) or `permissionDecision: "deny"` |
+| `make_pre_tool_use_hook` | `PreToolUse` | yes | `{}` or `"deny"` |
+| `make_post_tool_use_hook` | `PostToolUse` | no (audit-only) | `{}` |
+| `make_post_tool_failure_hook` | `PostToolUseFailure` | no (audit-only, status `BLOCKED`) | `{}` |
+| `make_stop_hook` | `Stop` | no | `{}` |
+| `make_subagent_start_hook` | `SubagentStart` | no | `{}` |
+| `make_subagent_stop_hook` | `SubagentStop` | no | `{}` |
+| `make_pre_compact_hook` | `PreCompact` | no | `{}` |
+| `make_permission_request_hook` | `PermissionRequest` | yes | `permissionDecision: "allow"` / `"deny"` / `"ask"` (the only factory that emits all three states; maps `policy.require_human_approval=True` to `"ask"`) |
+| `make_notification_hook` | `Notification` | no | `{}` |
+
+Every factory records to `policy_engine.audit.AUDIT` so the unified audit trail in `run_all.py` covers every governance-relevant moment of a Claude session. See [[Claude-Agent-SDK-Full-Demo]] for the architecture context (layered diagram, sequence diagram, audit-record fields).
+
 ---
 
 ## Framework runtime / middleware reference

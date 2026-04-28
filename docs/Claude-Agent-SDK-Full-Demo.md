@@ -101,9 +101,9 @@ The arrows from all three hooks into `_resolve_kernel_ctx` are the architectural
 
 ---
 
-## 3. The three hook factories
+## 3. The hook factories
 
-All three live in `policy-engine/src/policy_engine/adapters/claude.py`. They share a small helper:
+The adapter ships ten factories — one per Python-supported SDK event. The three covered in detail below (`UserPromptSubmit`, `PreToolUse`, `PostToolUse`) are the architectural example; the seven informational + gating factories that close the coverage gap (`Stop`, `SubagentStart`, `SubagentStop`, `PreCompact`, `PostToolUseFailure`, `PermissionRequest`, `Notification`) are summarised in §3.5 below. All ten live in `policy-engine/src/policy_engine/adapters/claude.py` and share a small helper:
 
 ```python
 def _resolve_kernel_ctx(
@@ -199,7 +199,22 @@ This is the architecturally interesting case: the policy core's `evaluate()` inc
 |---|---|
 | `{}` | continue (allow) |
 | `{"hookSpecificOutput": {"hookEventName": ..., "permissionDecision": "deny", "permissionDecisionReason": "..."}}` | block; reason is shown to Claude |
-| `{"hookSpecificOutput": {... "permissionDecision": "ask", ...}}` | escalate to human (not used by these factories — policy decides allow/deny outright) |
+| `{"hookSpecificOutput": {... "permissionDecision": "ask", ...}}` | escalate to human |
+
+`"ask"` is emitted only by `make_permission_request_hook` (see §3.5) — the gating factories above don't use it because they deny outright.
+
+### 3.5 The remaining seven factories
+
+These follow the same `(policy, *, kernel=None, ctx=None) -> Callable` signature and the same `_resolve_kernel_ctx` helper. Six are informational (no `kernel.evaluate` call, just `audit(...)` and `return {}`); one (`make_permission_request_hook`) gates the same way `make_pre_tool_use_hook` does, plus a third decision state:
+
+- **`make_stop_hook`** — fires when the agent loop ends. Records `audit("claude", "Stop", "ALLOWED", "stop_hook_active=…")`. Useful for closing the per-session row in the audit trail.
+- **`make_subagent_start_hook` / `make_subagent_stop_hook`** — fire when a `Task` subagent spawns or completes. Detail captures `agent_id` (and `agent_type` on start) so parent/child correlation is visible in the unified audit trail.
+- **`make_pre_compact_hook`** — fires before context compaction. Detail captures the compaction `trigger` (`"manual"` from a `/compact` slash command, `"auto"` when the SDK hits the context limit). Audit-only — the SDK doesn't pass the transcript to this hook, so there's nothing to archive in-process.
+- **`make_post_tool_failure_hook`** — fires when a tool raises. Records with status `"BLOCKED"` (distinct from `PostToolUse`'s `"ALLOWED"`) so failure rows are filterable. The error message is truncated to 200 chars and stored in the audit row's `reason` field.
+- **`make_permission_request_hook`** — gating, like `make_pre_tool_use_hook`. The only factory that emits all three SDK decision states: `"deny"` when the policy blocks the tool/payload, `"ask"` when `policy.require_human_approval=True` (the SDK then handles the human prompt), `"allow"` otherwise. Reuses `_stringify_tool_input` for pattern matching.
+- **`make_notification_hook`** — fires for SDK status messages (`permission_prompt`, `idle_prompt`, `auth_success`, `elicitation_dialog`). Short messages go in the audit detail verbatim; long messages are recorded by length only (the audit module's `payload_hash` convention handles deeper inspection if downstream needs it).
+
+None of the seven need a separate architectural treatment — they're a thin transformation from SDK input dict to audit row, with the gating factory borrowing the same `PolicyDecision` → `permissionDecision` mapping the existing factories use. The tests in `policy-engine/tests/test_claude_adapter.py` cover each one in isolation with synthetic input dicts (no SDK import needed).
 
 ---
 
