@@ -29,6 +29,7 @@ def _load_demos():
     from crewai_governed import main as crewai_main
     from pydantic_ai_governed import main as pydantic_main
     from claude_governed import main as claude_main
+    from claude_all_hooks import main as claude_all_hooks_main
 
     return [
         (
@@ -84,6 +85,12 @@ def _load_demos():
             "Claude Agent SDK — full agent loop with UserPromptSubmit + PreToolUse + PostToolUse",
             "Seam: HookMatcher closures over a shared BaseKernel; multi-turn ClaudeSDKClient with resume + fork.",
             claude_main,
+        ),
+        (
+            "claude_all_hooks",
+            "Claude Agent SDK — every Python-supported hook factory wired",
+            "Seam: HookMatcher closures over a shared BaseKernel; all 10 factories registered in one ClaudeAgentOptions.",
+            claude_all_hooks_main,
         ),
     ]
 
