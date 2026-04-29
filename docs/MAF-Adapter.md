@@ -170,7 +170,7 @@ Run: `OPENAI_API_KEY=… python hello_world_maf.py`. The block raises `Permissio
 
 ## Hello-world example — C# / .NET (full policy)
 
-> The Python `policy_engine` package has no C# port in this repo, so the policy primitive is inlined. The structure mirrors `policy-engine/src/policy_engine/adapters/maf.py` 1:1: a `GovernancePolicy` record, a per-run state object, and a middleware factory wired via the MAF fluent builder.
+> The repo now includes a .NET 10 port under `policy-engine-dotnet/`. The standalone example below keeps the policy primitive inline for readability, while reusable code should reference `PolicyEngine` and `PolicyEngine.Adapters.MicrosoftAgents`.
 
 ### Project setup
 

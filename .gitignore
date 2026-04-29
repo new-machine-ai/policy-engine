@@ -30,6 +30,12 @@ ENV/
 htmlcov/
 .hypothesis/
 
+# .NET
+bin/
+obj/
+*.user
+*.suo
+
 # Editor / OS
 .DS_Store
 .idea/

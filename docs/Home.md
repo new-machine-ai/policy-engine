@@ -14,6 +14,7 @@
 
 - [[Core-Concepts]] — how `BaseKernel.evaluate` works and the four adapter patterns
 - [[Seam-Taxonomy]] — at-a-glance comparison of where each adapter plugs in
+- [[DotNet-Port]] — .NET 10 C# port with Microsoft Agent Framework and OpenAI adapters
 
 ## Adapters
 
@@ -30,4 +31,6 @@
 
 ## Layout
 
-Each adapter lives at `policy-engine/src/policy_engine/adapters/<name>.py` and has a matching demo at `policy_engine_demos/<name>_governed.py`. The shared rulebook used by `run_all.py` is defined once in `policy_engine_demos/_shared.py` as `POLICY`.
+Each Python adapter lives at `policy-engine/src/policy_engine/adapters/<name>.py` and has a matching demo at `policy_engine_demos/<name>_governed.py`. The shared rulebook used by `run_all.py` is defined once in `policy_engine_demos/_shared.py` as `POLICY`.
+
+The .NET 10 port lives at `policy-engine-dotnet/`. It includes the dependency-free core plus .NET-native Microsoft Agent Framework and OpenAI adapters. Agent-OS is intentionally excluded from the .NET port.
