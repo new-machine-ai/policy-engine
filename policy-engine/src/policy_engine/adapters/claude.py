@@ -19,6 +19,7 @@ from policy_engine.kernel import BaseKernel
 from policy_engine.policy import GovernancePolicy, PolicyRequest
 
 __all__ = [
+    "ClaudeSDKKernel",
     "make_user_prompt_hook",
     "make_pre_tool_use_hook",
     "make_post_tool_use_hook",
@@ -380,3 +381,59 @@ def make_notification_hook(
         return {}
 
     return gov_hook
+
+
+class ClaudeSDKKernel(BaseKernel):
+    """Convenience kernel for the Claude Agent SDK.
+
+    Exposes :meth:`governed_options` which returns a copy of a
+    ``ClaudeAgentOptions`` with ``UserPromptSubmit`` and ``PreToolUse`` gating
+    hooks pre-attached. All bundled hooks share one ``ExecutionContext`` so
+    ``max_tool_calls`` accounting stays consistent.
+
+    Existing entries in ``base.hooks`` are preserved; the governance hook is
+    inserted at the front of each event's list.
+    """
+
+    framework = "claude"
+
+    def governed_options(
+        self,
+        base: Any,
+        *,
+        name: str = "claude-sdk",
+        include_permission_request: bool = False,
+    ) -> Any:
+        from dataclasses import replace
+
+        from claude_agent_sdk import HookMatcher
+
+        ctx = self.create_context(name)
+        hooks: dict[str, list] = {
+            event: list(matchers)
+            for event, matchers in (getattr(base, "hooks", None) or {}).items()
+        }
+        hooks.setdefault("UserPromptSubmit", []).insert(
+            0,
+            HookMatcher(
+                hooks=[make_user_prompt_hook(self.policy, kernel=self, ctx=ctx)]
+            ),
+        )
+        hooks.setdefault("PreToolUse", []).insert(
+            0,
+            HookMatcher(
+                hooks=[make_pre_tool_use_hook(self.policy, kernel=self, ctx=ctx)]
+            ),
+        )
+        if include_permission_request:
+            hooks.setdefault("PermissionRequest", []).insert(
+                0,
+                HookMatcher(
+                    hooks=[
+                        make_permission_request_hook(
+                            self.policy, kernel=self, ctx=ctx
+                        )
+                    ]
+                ),
+            )
+        return replace(base, hooks=hooks)

@@ -69,6 +69,16 @@ def print_banner(name: str) -> None:
     print(f"\n=== {name} ===")
 
 
+async def claude_prompt_stream(text: str, *, session_id: str = "hello"):
+    """Async iterable for the Claude Agent SDK ``query(prompt=...)`` argument."""
+    yield {
+        "type": "user",
+        "message": {"role": "user", "content": text},
+        "parent_tool_use_id": None,
+        "session_id": session_id,
+    }
+
+
 __all__ = [
     "ANTHROPIC_MODEL",
     "ANTHROPIC_POLICY",
@@ -79,6 +89,7 @@ __all__ = [
     "OPENAI_AGENTS_POLICY",
     "OPENAI_MODEL",
     "PROMPT",
+    "claude_prompt_stream",
     "print_banner",
     "require_env",
 ]

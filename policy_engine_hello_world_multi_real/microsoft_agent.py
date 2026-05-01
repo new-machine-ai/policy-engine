@@ -14,12 +14,9 @@ async def main() -> None:
     from agent_framework import Agent
     from agent_framework.openai import OpenAIChatClient
 
-    from policy_engine.adapters.maf import create_governance_middleware
+    from policy_engine.adapters.maf import MAFKernel
 
-    middleware = create_governance_middleware(
-        policy=MAF_POLICY,
-        agent_id="hello-world-maf",
-    )
+    middleware = MAFKernel(MAF_POLICY).as_middleware(agent_id="hello-world-maf")
     async with Agent(
         client=OpenAIChatClient(model=OPENAI_MODEL),
         name="hello-world-maf",

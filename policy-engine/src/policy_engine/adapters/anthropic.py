@@ -22,6 +22,7 @@ __all__ = [
     "AnthropicKernel",
     "GovernanceMessageHook",
     "GovernancePolicy",
+    "GovernedAnthropicClient",
     "PolicyViolationError",
 ]
 
@@ -85,6 +86,20 @@ class AnthropicKernel(BaseKernel):
         name: str = "anthropic-governance",
     ) -> "GovernanceMessageHook":
         return GovernanceMessageHook(self, name=name)
+
+    def governed_client(
+        self,
+        client: Any,
+        *,
+        name: str = "anthropic",
+    ) -> "GovernedAnthropicClient":
+        """Wrap an Anthropic client so ``client.messages.create`` is governed.
+
+        The returned object is a drop-in replacement: any attribute other than
+        ``.messages`` falls through to the underlying client, so callers keep
+        the familiar ``client.messages.create(...)`` shape.
+        """
+        return GovernedAnthropicClient(client, GovernanceMessageHook(self, name=name))
 
 
 class GovernanceMessageHook:
@@ -151,3 +166,27 @@ class GovernanceMessageHook:
             policy=self._kernel.policy.name,
         )
         return response
+
+
+class GovernedAnthropicClient:
+    """Drop-in Anthropic client wrapper with policy-gated ``messages.create``."""
+
+    def __init__(self, client: Any, hook: GovernanceMessageHook) -> None:
+        self._client = client
+        self._hook = hook
+        self.messages = _GovernedMessages(client, hook)
+
+    def __getattr__(self, item: str) -> Any:
+        return getattr(self._client, item)
+
+
+class _GovernedMessages:
+    def __init__(self, client: Any, hook: GovernanceMessageHook) -> None:
+        self._client = client
+        self._hook = hook
+
+    def create(self, **kwargs: Any) -> Any:
+        return self._hook.create(self._client, **kwargs)
+
+    def __getattr__(self, item: str) -> Any:
+        return getattr(self._client.messages, item)

@@ -15,15 +15,9 @@ async def main() -> None:
 
     from policy_engine.adapters.openai_agents import OpenAIAgentsKernel
 
-    kernel = OpenAIAgentsKernel(policy=OPENAI_AGENTS_POLICY)
-    agent = Agent(
-        name="assistant",
-        model=OPENAI_MODEL,
-        instructions="Be friendly and concise.",
-    )
-    governed = kernel.wrap(agent)
-    governed_runner = kernel.wrap_runner(Runner)
-    result = await governed_runner.run(governed, PROMPT)
+    runner = OpenAIAgentsKernel(OPENAI_AGENTS_POLICY).wrap_runner(Runner)
+    agent = Agent(name="assistant", model=OPENAI_MODEL, instructions="Be friendly and concise.")
+    result = await runner.run(agent, PROMPT)
     print(result.final_output)
 
 

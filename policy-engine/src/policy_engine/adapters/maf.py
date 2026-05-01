@@ -1,4 +1,12 @@
-"""MAF (Microsoft Agent Framework) adapter — middleware list factory."""
+"""MAF (Microsoft Agent Framework) adapter — middleware list factory.
+
+Two equivalent surfaces:
+
+- :func:`create_governance_middleware` — the original free function.
+- :class:`MAFKernel` — a small class whose :meth:`MAFKernel.as_middleware`
+  delegates to the same function. Provided so MAF wires up with the same
+  ``Kernel(policy).method(...)`` shape as the other adapters.
+"""
 
 import inspect
 import sys
@@ -7,6 +15,8 @@ from typing import Any
 from policy_engine.audit import audit
 from policy_engine.kernel import BaseKernel
 from policy_engine.policy import GovernancePolicy, PolicyRequest
+
+__all__ = ["MAFKernel", "create_governance_middleware"]
 
 
 def _extract_tool_name(context: Any) -> str | None:
@@ -131,3 +141,29 @@ def create_governance_middleware(
         stack.append(_agent_middleware(_rogue_gate))
 
     return stack
+
+
+class MAFKernel(BaseKernel):
+    """Convenience kernel for the Microsoft Agent Framework.
+
+    Exposes :meth:`as_middleware` so MAF wires up with the same
+    ``Kernel(policy).method(...)`` shape as the other adapters.
+    """
+
+    framework = "maf"
+
+    def as_middleware(
+        self,
+        *,
+        agent_id: str = "policy-engine-maf",
+        allowed_tools: list[str] | None = None,
+        denied_tools: list[str] | None = None,
+        enable_rogue_detection: bool = False,
+    ) -> list[Any]:
+        return create_governance_middleware(
+            policy=self.policy,
+            agent_id=agent_id,
+            allowed_tools=allowed_tools,
+            denied_tools=denied_tools,
+            enable_rogue_detection=enable_rogue_detection,
+        )

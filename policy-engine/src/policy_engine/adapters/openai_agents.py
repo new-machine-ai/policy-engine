@@ -24,11 +24,6 @@ class OpenAIAgentsKernel(BaseKernel):
         self._on_violation = on_violation
         self._ctx = self.create_context("openai-agents")
 
-    def wrap(self, agent: Any) -> Any:
-        """Tool allow/deny is enforced by the wrapped Runner; the agent itself
-        is returned unchanged so the SDK still recognizes it."""
-        return agent
-
     def wrap_runner(self, runner_cls: type) -> type:
         kernel = self
 

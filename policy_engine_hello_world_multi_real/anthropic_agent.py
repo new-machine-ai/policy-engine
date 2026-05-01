@@ -19,10 +19,8 @@ def main() -> None:
 
     from policy_engine.adapters.anthropic import AnthropicKernel
 
-    kernel = AnthropicKernel(policy=ANTHROPIC_POLICY)
-    hook = kernel.as_message_hook(name="hello-world-anthropic")
-    response = hook.create(
-        anthropic.Anthropic(),
+    client = AnthropicKernel(ANTHROPIC_POLICY).governed_client(anthropic.Anthropic())
+    response = client.messages.create(
         model=ANTHROPIC_MODEL,
         max_tokens=128,
         messages=[{"role": "user", "content": PROMPT}],
