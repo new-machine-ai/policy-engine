@@ -13,4 +13,5 @@
 - [[CrewAI-Adapter]]
 - [[PydanticAI-Adapter]]
 - [[Claude-Agent-SDK-Adapter]]
+- [[Anthropic-Adapter]]
 - [[Agent-OS-Backend-Adapter]]

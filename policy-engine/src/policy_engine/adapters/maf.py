@@ -1,5 +1,6 @@
 """MAF (Microsoft Agent Framework) adapter — middleware list factory."""
 
+import inspect
 import sys
 from typing import Any
 
@@ -9,15 +10,50 @@ from policy_engine.policy import GovernancePolicy, PolicyRequest
 
 
 def _extract_tool_name(context: Any) -> str | None:
-    return getattr(getattr(context, "function_call", None), "name", None)
+    for attr in ("function_call", "function"):
+        name = getattr(getattr(context, attr, None), "name", None)
+        if name:
+            return str(name)
+    return None
 
 
 def _extract_payload(context: Any) -> str:
     for attr in ("prompt", "input", "messages"):
         value = getattr(context, attr, None)
-        if value:
+        if not value:
+            continue
+        if attr == "messages" and isinstance(value, list):
+            parts = []
+            for message in value:
+                parts.append(
+                    str(
+                        getattr(message, "text", None)
+                        or getattr(message, "content", None)
+                        or message
+                    )
+                )
+            return "\n".join(parts)
+        else:
             return str(value)
     return ""
+
+
+async def _call_next(next_: Any, context: Any) -> Any:
+    try:
+        params = inspect.signature(next_).parameters
+    except (TypeError, ValueError):
+        params = {}
+    if params:
+        return await next_(context)
+    return await next_()
+
+
+def _agent_middleware(func: Any) -> Any:
+    try:
+        from agent_framework import agent_middleware
+    except ImportError:
+        return func
+    return agent_middleware(func)
 
 
 def _effective_policy(
@@ -84,14 +120,14 @@ def create_governance_middleware(
                     decision=decision,
                 )
                 raise PermissionError(decision.reason or "blocked")
-            return await next_(context)
+            return await _call_next(next_, context)
 
-        stack.append(_policy_gate)
+        stack.append(_agent_middleware(_policy_gate))
 
     if enable_rogue_detection:
         async def _rogue_gate(context, next_):
-            return await next_(context)
+            return await _call_next(next_, context)
 
-        stack.append(_rogue_gate)
+        stack.append(_agent_middleware(_rogue_gate))
 
     return stack

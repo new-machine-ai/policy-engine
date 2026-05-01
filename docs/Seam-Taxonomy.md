@@ -9,4 +9,5 @@
 | [[CrewAI-Adapter]] | Bare kernel | Demo's `@before_llm_call` / `@after_llm_call` | `@before_kickoff`/`@after_kickoff`, `step_callback`, per-tool decorators |
 | [[PydanticAI-Adapter]] | Method proxy | `_GovernedPydanticAgent.run(...)` | `@output_validator`, `UsageLimits`, `run_sync` / `run_stream` |
 | [[Claude-Agent-SDK-Adapter]] | Hook factory | `gov_hook` registered on `UserPromptSubmit` | `PreToolUse`, `PostToolUse`, `SessionStart`, `Stop`, etc. |
+| [[Anthropic-Adapter]] | Message hook | `GovernanceMessageHook.create(client, ...)` before `client.messages.create(...)` | streaming, beta APIs, client proxy wrapping |
 | [[Agent-OS-Backend-Adapter]] | Backend bridge (BaseKernel subclass) | Override of `evaluate` delegating to `PolicyInterceptor.intercept` | n/a — backend, not a host framework |
