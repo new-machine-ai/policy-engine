@@ -19,6 +19,7 @@ langchain = ["langchain-core", "langchain-openai", "langgraph"]
 crewai = ["crewai"]
 pydantic-ai = ["pydantic-ai"]
 claude = ["claude-agent-sdk"]
+anthropic = ["anthropic"]
 agent-os = ["agent-os-kernel>=3.2.2,<4"]
 all = [
     "agent-framework",
@@ -30,6 +31,7 @@ all = [
     "crewai",
     "pydantic-ai",
     "claude-agent-sdk",
+    "anthropic",
     "agent-os-kernel>=3.2.2,<4",
 ]
 test = ["pytest>=7.0"]

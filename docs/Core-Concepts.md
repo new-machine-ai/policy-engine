@@ -40,7 +40,7 @@ GovernancePolicy(
 | Pattern | What ships | Adapters |
 |---|---|---|
 | Method-proxy wrap | A wrapper class whose entry-point methods call `pre_execute` before delegating | `openai_assistants`, `pydantic_ai`, `openai_agents` (Runner only) |
-| Hook/middleware factory | A closure or list the framework's own hook system runs | `claude`, `maf` |
+| Hook/middleware factory | A closure, list, or explicit hook object that gates the host call | `claude`, `maf`, `anthropic` |
 | Bare kernel | `BaseKernel` re-exported under a `framework` name; the *demo* writes the framework hook | `langchain`, `crewai` |
 | Backend bridge | `BaseKernel`-compatible facade over a richer external policy engine | `agent_os` |
 

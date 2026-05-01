@@ -8,7 +8,7 @@ governance without changing the small core API.
 ## Scope
 
 This package re-implements **only** the runtime surface needed to gate prompts
-and tool calls across seven frameworks:
+and tool calls across popular agent frameworks and SDKs:
 
 | Framework | Adapter import |
 |---|---|
@@ -19,6 +19,7 @@ and tool calls across seven frameworks:
 | CrewAI | `policy_engine.adapters.crewai` |
 | PydanticAI | `policy_engine.adapters.pydantic_ai` |
 | Claude Agent SDK | `policy_engine.adapters.claude` |
+| Anthropic SDK | `policy_engine.adapters.anthropic` |
 | Agent-OS backend | `policy_engine.adapters.agent_os` |
 
 ## Public API

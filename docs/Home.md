@@ -8,7 +8,7 @@
 - human-approval gating
 - a structured audit trail
 
-…and exposes that one decision through **eight thin adapters** (seven host frameworks plus an Agent-OS backend bridge).
+…and exposes that one decision through **nine thin adapters** (eight host/framework SDK surfaces plus an Agent-OS backend bridge).
 
 ## Start here
 
@@ -26,6 +26,7 @@
 | CrewAI | Bare kernel | [[CrewAI-Adapter]] |
 | PydanticAI | Method proxy | [[PydanticAI-Adapter]] |
 | Claude Agent SDK | Hook factory | [[Claude-Agent-SDK-Adapter]] |
+| Anthropic SDK | Message hook | [[Anthropic-Adapter]] |
 | Agent-OS (backend) | BaseKernel subclass | [[Agent-OS-Backend-Adapter]] |
 
 ## Layout
