@@ -170,7 +170,7 @@ Run: `OPENAI_API_KEY=… python hello_world_maf.py`. The block raises `Permissio
 
 ## Hello-world example — C# / .NET (full policy)
 
-> The repo now includes a .NET 10 port under `policy-engine-dotnet/`. The standalone example below keeps the policy primitive inline for readability, while reusable code should reference `PolicyEngine` and `PolicyEngine.Adapters.MicrosoftAgents`.
+> Cross-language reference: the same governance pattern in MAF for .NET. The repo itself is Python-only — this example keeps the policy primitive inline so it stands alone.
 
 ### Project setup
 
