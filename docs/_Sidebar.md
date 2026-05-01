@@ -3,6 +3,7 @@
 - [[Home]]
 - [[Core-Concepts]]
 - [[Seam-Taxonomy]]
+- [[Adapter-API-Shape]]
 
 **Adapters**
 - [[MAF-Adapter]]

@@ -1,4 +1,9 @@
-"""OpenAI Agents SDK adapter — OpenAIAgentsKernel + wrapped Runner."""
+"""OpenAI Agents SDK adapter — OpenAIAgentsKernel + governed Runner.
+
+``OpenAIAgentsKernel.governed_runner(Runner)`` returns a drop-in replacement
+for the SDK's ``Runner`` class whose ``.run(...)`` method evaluates the
+policy before delegating. ``wrap_runner`` is retained as a back-compat alias.
+"""
 
 from typing import Any, Callable
 
@@ -24,7 +29,9 @@ class OpenAIAgentsKernel(BaseKernel):
         self._on_violation = on_violation
         self._ctx = self.create_context("openai-agents")
 
-    def wrap_runner(self, runner_cls: type) -> type:
+    def governed_runner(self, runner_cls: type) -> type:
+        """Return a drop-in replacement for ``runner_cls`` whose ``run`` method
+        evaluates the policy before delegating to the original runner."""
         kernel = self
 
         class GovernedRunner:
@@ -39,3 +46,6 @@ class OpenAIAgentsKernel(BaseKernel):
                 return await runner_cls.run(agent, input_text, **kwargs)
 
         return GovernedRunner
+
+    # Back-compat alias for callers written against the older API.
+    wrap_runner = governed_runner

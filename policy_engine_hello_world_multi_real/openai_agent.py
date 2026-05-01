@@ -15,7 +15,7 @@ async def main() -> None:
 
     from policy_engine.adapters.openai_agents import OpenAIAgentsKernel
 
-    runner = OpenAIAgentsKernel(OPENAI_AGENTS_POLICY).wrap_runner(Runner)
+    runner = OpenAIAgentsKernel(OPENAI_AGENTS_POLICY).governed_runner(Runner)
     agent = Agent(name="assistant", model=OPENAI_MODEL, instructions="Be friendly and concise.")
     result = await runner.run(agent, PROMPT)
     print(result.final_output)

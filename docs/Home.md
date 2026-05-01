@@ -14,6 +14,7 @@
 
 - [[Core-Concepts]] — how `BaseKernel.evaluate` works and the four adapter patterns
 - [[Seam-Taxonomy]] — at-a-glance comparison of where each adapter plugs in
+- [[Adapter-API-Shape]] — why each SDK gets a different noun in `kernel.governed_<noun>(...)`
 
 ## Adapters
 
