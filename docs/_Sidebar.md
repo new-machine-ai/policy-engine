@@ -3,6 +3,7 @@
 - [[Home]]
 - [[Core-Concepts]]
 - [[Seam-Taxonomy]]
+- [[Adapter-API-Shape]]
 
 **Adapters**
 - [[MAF-Adapter]]
@@ -13,4 +14,5 @@
 - [[PydanticAI-Adapter]]
 - [[Claude-Agent-SDK-Adapter]]
 - [[Anthropic-Adapter]]
+- [[Google-ADK-Adapter]]
 - [[Agent-OS-Backend-Adapter]]

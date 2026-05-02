@@ -20,6 +20,7 @@ and tool calls across popular agent frameworks and SDKs:
 | PydanticAI | `policy_engine.adapters.pydantic_ai` |
 | Claude Agent SDK | `policy_engine.adapters.claude` |
 | Anthropic SDK | `policy_engine.adapters.anthropic` |
+| Google ADK | `policy_engine.adapters.google_adk` |
 | Agent-OS backend | `policy_engine.adapters.agent_os` |
 
 ## Public API
@@ -94,3 +95,8 @@ Parallel demos live in `policy_engine_demos/`. Run them all from the repo root:
 ```
 python policy_engine_demos/run_all.py
 ```
+
+Google ADK has two examples in this checkout:
+`policy_engine_demos/google_adk_callbacks_governed.py` is deterministic and
+does not require a live model; `policy_engine_hello_world_multi_real/google_adk_agent.py`
+uses a live ADK `LlmAgent`/`InMemoryRunner` and requires Google credentials.

@@ -13,6 +13,7 @@ SAMPLES = [
     "openai_agent.py",
     "microsoft_agent.py",
     "anthropic_agent.py",
+    "google_adk_agent.py",
     "claude_agent_sdk_agent.py",
 ]
 
