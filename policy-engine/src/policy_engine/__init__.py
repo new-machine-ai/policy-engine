@@ -9,6 +9,7 @@ from policy_engine.policy import (
     PolicyRequest,
     PolicyViolationError,
 )
+from policy_engine.rate_limit import RateLimitConfig, TokenBucket
 
 __all__ = [
     "AUDIT",
@@ -18,6 +19,8 @@ __all__ = [
     "PolicyDecision",
     "PolicyRequest",
     "PolicyViolationError",
+    "RateLimitConfig",
+    "TokenBucket",
     "audit",
     "reset_audit",
 ]

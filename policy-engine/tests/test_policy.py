@@ -179,6 +179,69 @@ def test_policy_violation_error_carries_reason() -> None:
     assert str(err) == "blocked"
 
 
+def test_pattern_engine_default_is_substring() -> None:
+    p = GovernancePolicy(blocked_patterns=["ssn"])
+    assert p.pattern_engine == "substring"
+    assert p.matches_pattern("Get user ssn") == "ssn"
+    # A regex-style escape is treated as a literal substring under the default
+    p_literal = GovernancePolicy(blocked_patterns=[r"\bssn\b"])
+    assert p_literal.matches_pattern("Get user ssn") is None
+
+
+def test_pattern_engine_regex_matches_word_boundary() -> None:
+    p = GovernancePolicy(blocked_patterns=[r"\bssn\b"], pattern_engine="regex")
+    assert p.matches_pattern("Get user ssn now") == r"\bssn\b"
+    assert p.matches_pattern("get user assness today") is None  # no word boundary
+
+
+def test_pattern_engine_regex_is_case_insensitive() -> None:
+    p = GovernancePolicy(blocked_patterns=[r"DROP\s+TABLE"], pattern_engine="regex")
+    assert p.matches_pattern("please drop\ttable users") == r"DROP\s+TABLE"
+
+
+def test_pattern_engine_invalid_value_rejected() -> None:
+    policy = GovernancePolicy(blocked_patterns=["x"], pattern_engine="fuzzy")  # type: ignore[arg-type]
+    with pytest.raises(ValueError, match="pattern_engine"):
+        BaseKernel(policy)
+
+
+def test_pattern_engine_regex_validates_at_construction() -> None:
+    policy = GovernancePolicy(
+        blocked_patterns=["[unclosed"], pattern_engine="regex"
+    )
+    with pytest.raises(ValueError, match="invalid regex"):
+        BaseKernel(policy)
+
+
+def test_audit_payload_summary_field_validates_non_negative() -> None:
+    policy = GovernancePolicy(audit_payload_summary=-1)
+    with pytest.raises(ValueError, match="audit_payload_summary"):
+        BaseKernel(policy)
+
+
+def test_audit_records_payload_summary_when_provided() -> None:
+    reset_audit()
+    audit(
+        "test",
+        "phase",
+        "ALLOWED",
+        payload_hash="abc",
+        payload_summary="hello world",
+    )
+    entry = AUDIT[-1]
+    assert entry["payload_summary"] == "hello world"
+    assert entry["payload_hash"] == "abc"
+    reset_audit()
+
+
+def test_audit_omits_payload_summary_when_not_set() -> None:
+    reset_audit()
+    audit("test", "phase", "ALLOWED", payload_hash="abc")
+    entry = AUDIT[-1]
+    assert "payload_summary" not in entry
+    reset_audit()
+
+
 def test_claude_hook_blocks_with_core_decision() -> None:
     from policy_engine.adapters.claude import make_user_prompt_hook
 
