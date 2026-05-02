@@ -10,4 +10,5 @@
 | [[PydanticAI-Adapter]] | Method proxy | `_GovernedPydanticAgent.run(...)` | `@output_validator`, `UsageLimits`, `run_sync` / `run_stream` |
 | [[Claude-Agent-SDK-Adapter]] | Hook factory | `gov_hook` registered on `UserPromptSubmit` | `PreToolUse`, `PostToolUse`, `SessionStart`, `Stop`, etc. |
 | [[Anthropic-Adapter]] | Message hook | `GovernanceMessageHook.create(client, ...)` before `client.messages.create(...)` | streaming, beta APIs, client proxy wrapping |
+| [[Google-ADK-Adapter]] | Callback/plugin factory | `before_tool_callback`, `after_tool_callback`, and `as_plugin()` before model/tool execution | agent transfer hooks, custom session services |
 | [[Agent-OS-Backend-Adapter]] | Backend bridge (BaseKernel subclass) | Override of `evaluate` delegating to `PolicyInterceptor.intercept` | n/a — backend, not a host framework |

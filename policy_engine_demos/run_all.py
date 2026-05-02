@@ -28,6 +28,7 @@ def _load_demos():
     from langchain_governed import main as langchain_main
     from crewai_governed import main as crewai_main
     from pydantic_ai_governed import main as pydantic_main
+    from google_adk_callbacks_governed import main as google_adk_callbacks_main
     from claude_governed import main as claude_main
     from claude_all_hooks import main as claude_all_hooks_main
 
@@ -81,6 +82,12 @@ def _load_demos():
             pydantic_main,
         ),
         (
+            "google_adk_callbacks",
+            "Google ADK — deterministic callback governance",
+            "Seam: GoogleADKKernel.before_tool_callback(...) direct ADK callback shape.",
+            google_adk_callbacks_main,
+        ),
+        (
             "claude",
             "Claude Agent SDK — full agent loop with UserPromptSubmit + PreToolUse + PostToolUse",
             "Seam: HookMatcher closures over a shared BaseKernel; multi-turn ClaudeSDKClient with resume + fork.",
@@ -106,7 +113,7 @@ def _print_intro() -> None:
     print(f"    require_human_approval: {POLICY.require_human_approval}")
     print(f"    blocked_tools         : {POLICY.blocked_tools}")
     print()
-    print("  Same policy enforced across 7 frameworks via thin adapters,")
+    print("  Same policy enforced across 8 framework surfaces via thin adapters,")
     print("  plus a dependency-free governance showcase and optional Agent-OS backend.")
     print("  Core imports stay lightweight; Agent-OS is loaded only by its adapter demo.")
     print(bar)

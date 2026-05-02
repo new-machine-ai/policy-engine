@@ -14,4 +14,5 @@
 - [[PydanticAI-Adapter]]
 - [[Claude-Agent-SDK-Adapter]]
 - [[Anthropic-Adapter]]
+- [[Google-ADK-Adapter]]
 - [[Agent-OS-Backend-Adapter]]

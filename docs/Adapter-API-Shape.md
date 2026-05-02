@@ -19,6 +19,7 @@ and why the variation is honest rather than fixable.
 | OpenAI Agents | `OpenAIAgentsKernel(p).governed_runner(Runner)` | `governed_<noun>(seed)` |
 | LangChain 1.x | `LangChainKernel(p).as_middleware()` | `as_<noun>()` |
 | MAF | `MAFKernel(p).as_middleware(agent_id=...)` | `as_<noun>(...)` |
+| Google ADK | `GoogleADKKernel(p).as_callbacks()` / `.as_plugin()` | `as_<noun>()` (twice — see below) |
 
 The choice between `governed_<noun>` and `as_<noun>` reflects whether
 the method **transforms a seed** or **constructs a fresh handle**:
@@ -255,3 +256,20 @@ So the noun varies, the verb varies between two coherent patterns,
 and everything *behind* the seam — evaluation, audit, policy, context
 — is identical. The variation lives only at the surface, where it
 matches the host SDK's vocabulary.
+
+## Google ADK — two seams in one SDK
+
+Google ADK is the one SDK that exposes `as_<noun>()` twice, because
+ADK itself ships two distinct hook points and the adapter mirrors
+them rather than collapsing them into one:
+
+- `as_callbacks()` returns `before_tool_callback` and
+  `after_tool_callback` for `LlmAgent(..., **callbacks)`.
+- `as_plugin()` returns a Runner plugin for
+  `Runner(..., plugins=[...])` and can also gate model requests
+  before they leave ADK.
+
+The demo split follows those seams: the callback demo is
+deterministic and directly calls the ADK-shaped callbacks; the
+hello-world sample is live and runs through an ADK `LlmAgent` plus
+`InMemoryRunner`.
