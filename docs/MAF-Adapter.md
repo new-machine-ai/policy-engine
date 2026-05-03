@@ -1,7 +1,7 @@
 # MAF — Microsoft Agent Framework
 
 **Source:** `policy-engine/src/policy_engine/adapters/maf.py`
-**Demo:** `policy_engine_demos/maf_governed.py`
+**Demo:** `policy_engine_hello_world_multi_real_consolidated/microsoft_agent.py`
 
 ## Seam
 

@@ -1,7 +1,7 @@
 # Agent-OS — Backend Bridge
 
 **Source:** `policy-engine/src/policy_engine/adapters/agent_os.py`
-**Demo:** `policy_engine_demos/agent_os_governed.py`
+**Demo:** `policy_engine_hello_world_multi_real_consolidated/agent_os_governed.py`
 
 > Not a host framework — a **backend** that replaces local pattern matching with a richer engine while preserving the local `BaseKernel` API.
 

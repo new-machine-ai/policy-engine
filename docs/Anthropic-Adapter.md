@@ -1,7 +1,7 @@
 # Anthropic SDK
 
 **Source:** `policy-engine/src/policy_engine/adapters/anthropic.py`  
-**Demo:** `policy_engine_hello_world_multi_real/anthropic_agent.py`
+**Demo:** `policy_engine_hello_world_multi_real_consolidated/anthropic_agent.py`
 
 ## Seam
 

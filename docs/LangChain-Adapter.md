@@ -1,7 +1,7 @@
 # LangChain / LangGraph
 
 **Source:** `policy-engine/src/policy_engine/adapters/langchain.py`
-**Demo:** `policy_engine_demos/langchain_governed.py`
+**Demo:** `policy_engine_hello_world_multi_real_consolidated/langchain_agent.py`
 
 ## Seam
 

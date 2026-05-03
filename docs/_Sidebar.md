@@ -18,6 +18,7 @@
 - [[Agent-OS-Backend-Adapter]]
 
 **Demos & Examples**
+- [[Hello-World-Snippets]]
 - [[Demos]]
 
 **Comparisons**

@@ -2,7 +2,7 @@
 
 ## Context
 
-`policy_engine_demos/claude_all_hooks.py` registers all ten Python-supported hook factories but, in a typical run, the SDK only emits four events:
+`policy_engine_hello_world_multi_real_consolidated/claude_all_hooks.py` registers all ten Python-supported hook factories but, in a typical run, the SDK only emits four events:
 
 ```
 gov[claude:all_hooks_demo] ALLOWED - factories_registered=10 events_fired=4
@@ -88,7 +88,7 @@ options_c = ClaudeAgentOptions(
 await _drain(query(
     prompt=(
         "Use the Task tool to spawn a research subagent that counts the "
-        "Python files in policy_engine_demos/ and reports the number."
+        "Python files in policy_engine_hello_world_multi_real_consolidated/ and reports the number."
     ),
     options=options_c,
 ))
@@ -173,7 +173,7 @@ A green run is `events_fired=10` printed in the closing audit row.
 
 ## Implementation outline
 
-### Modify — `policy_engine_demos/claude_all_hooks.py`
+### Modify — `policy_engine_hello_world_multi_real_consolidated/claude_all_hooks.py`
 
 1. Update `_drain` to also capture and return `session_id` from the `ResultMessage` (Phase D needs it). Keep the existing per-message `step()` output.
 
@@ -191,7 +191,7 @@ The estimated diff is ~120 net new lines (the file goes from ~190 → ~310). No 
 
 The seven new factories already work in isolation (16 unit tests in `tests/test_claude_adapter.py` prove it). This plan only changes which SDK behaviour the demo provokes; it does not change what the factories do or the policy they enforce.
 
-### Optional — `policy_engine_demos/run_all.py`
+### Optional — `policy_engine_hello_world_multi_real_consolidated/run_all.py`
 
 No changes. The demo stays registered as `claude_all_hooks`; only the per-phase output gets richer.
 
@@ -282,7 +282,7 @@ async def main() -> None:
     c = await _drain(query(
         prompt=(
             "Use the Task tool to spawn a research subagent that counts the "
-            "Python files in policy_engine_demos/ and reports the number."
+            "Python files in policy_engine_hello_world_multi_real_consolidated/ and reports the number."
         ),
         options=_opts(["Read", "Glob", "Grep", "Task"], max_turns=4, system=(
             "Always delegate research questions to a subagent via the Task tool. "
@@ -325,7 +325,7 @@ async def main() -> None:
 2. **Full run, fresh session:**
    ```
    unset CLAUDECODE
-   python policy_engine_demos/run_all.py --only claude_all_hooks
+   python policy_engine_hello_world_multi_real_consolidated/run_all.py --only claude_all_hooks
    ```
    Expected: `events_fired=10` printed in the closing line.
 3. **Per-event spot-check:** every factory in `factories` should appear with at least one ALLOWED or BLOCKED count. If a phase didn't fire its target hook (model behaviour drift), the table makes that visible immediately.

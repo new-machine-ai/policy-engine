@@ -1,7 +1,7 @@
 # PydanticAI
 
 **Source:** `policy-engine/src/policy_engine/adapters/pydantic_ai.py`
-**Demo:** `policy_engine_demos/pydantic_ai_governed.py`
+**Demo:** `policy_engine_hello_world_multi_real_consolidated/pydantic_ai_governed.py`
 
 ## Seam
 

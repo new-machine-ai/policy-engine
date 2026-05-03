@@ -10,8 +10,8 @@ For the underlying SDK reference (event names, `ClaudeAgentOptions` fields, perm
 |---|---|
 | `policy-engine/src/policy_engine/adapters/claude.py` | Three hook factories: `make_user_prompt_hook`, `make_pre_tool_use_hook`, `make_post_tool_use_hook` |
 | `policy-engine/tests/test_claude_adapter.py` | Synthetic hook tests (no SDK import) |
-| `policy_engine_demos/claude_governed.py` | Six-phase demo wired to `_shared.POLICY` |
-| `policy_engine_demos/run_all.py` | Orchestrator + unified audit summary |
+| `policy_engine_hello_world_multi_real_consolidated/claude_governed.py` | Six-phase demo wired to `_shared.POLICY` |
+| `policy_engine_hello_world_multi_real_consolidated/run_all.py` | Orchestrator + unified audit summary |
 
 > ⚠️ The demo cannot be run from inside a Claude Code session — the SDK refuses nested sessions. Run from a regular shell with `CLAUDECODE` unset.
 
@@ -53,7 +53,7 @@ flowchart TB
         AUD[audit AUDIT list]
     end
 
-    subgraph DEMO["policy_engine_demos.claude_governed"]
+    subgraph DEMO["policy_engine_hello_world_multi_real_consolidated.claude_governed"]
         MAIN[main async]
         FMT[_format_cost / _drain]
     end
@@ -310,7 +310,7 @@ options = ClaudeAgentOptions(
     max_turns=5,
     max_budget_usd=0.50,
     permission_mode="default",
-    system_prompt="You help summarize the policy_engine_demos directory. ...",
+    system_prompt="You help summarize the consolidated examples directory. ...",
     hooks={
         "UserPromptSubmit": [HookMatcher(hooks=[user_prompt_hook])],
         "PreToolUse":       [HookMatcher(hooks=[pre_tool_hook])],
@@ -334,7 +334,7 @@ async with ClaudeSDKClient(options=options) as client:
     captured_session = first["session_id"]
 
     await client.query(
-        "Read langchain_governed.py and tell me which framework it targets in one sentence."
+        "Read langchain_agent.py and tell me which framework it targets in one sentence."
     )
     second = await _drain(client.receive_response())
 ```
@@ -377,7 +377,7 @@ Implementation:
 ```python
 # 4a — resume the same session
 resume_summary = await _drain(query(
-    prompt="Summarize what you learned about langchain_governed.py.",
+    prompt="Summarize what you learned about langchain_agent.py.",
     options=ClaudeAgentOptions(
         allowed_tools=["Read", "Glob", "Grep"], setting_sources=[],
         max_turns=2, permission_mode="default",
@@ -530,7 +530,7 @@ The demo self-skips cleanly in three situations:
 
 ```bash
 unset CLAUDECODE
-python policy_engine_demos/run_all.py --only claude
+python policy_engine_hello_world_multi_real_consolidated/run_all.py --only claude
 ```
 
 Expected output: six `[claude step N]` phases, two non-blocked `ResultMessage` rows in the audit summary, two `BLOCKED` rows minimum (one per blocked-prompt phase + any deny that occurred in PreToolUse during the allowed flow), and a positive `total_cost_usd` printed at the end.
