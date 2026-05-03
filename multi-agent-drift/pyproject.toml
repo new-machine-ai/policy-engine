@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "multi-agent-drift"
+version = "0.1.0"
+description = "Multi-agent context, drift, handoff, session, and saga primitives."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Agent Governance Toolkit" }]
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.scripts]
+multi-agent-drift = "multi_agent_drift.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+

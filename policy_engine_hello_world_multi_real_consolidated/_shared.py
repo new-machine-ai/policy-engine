@@ -11,11 +11,11 @@ REPO_ROOT = HERE.parent
 
 for src in (
     REPO_ROOT / "policy-engine" / "src",
+    REPO_ROOT / "mcp-security-scanner" / "src",
     REPO_ROOT.parent / "packages" / "policy-engine" / "src",
 ):
     if src.is_dir() and str(src) not in sys.path:
         sys.path.insert(0, str(src))
-        break
 
 from policy_engine import AUDIT, GovernancePolicy, audit  # noqa: E402
 
