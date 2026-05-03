@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "human-loop"
+version = "0.1.0"
+description = "Human approval, role gates, kill switches, and reversibility checks for agent actions."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Agent Governance Toolkit" }]
+dependencies = []
+
+[project.optional-dependencies]
+yaml = ["PyYAML>=6"]
+test = ["pytest>=7"]
+all = ["PyYAML>=6"]
+
+[project.scripts]
+human-loop = "human_loop.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "runaway-cost"
+version = "0.1.0"
+description = "Standalone rate limits, budgets, retries, and circuit breakers for runaway agent costs."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Agent Governance Toolkit" }]
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.scripts]
+runaway-cost = "runaway_cost.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

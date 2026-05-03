@@ -115,6 +115,27 @@ DEMOS = [
         "Seam: direct BaseKernel.evaluate() walkthrough; no framework SDK in the loop.",
         "policy_engine_deep_dive",
     ),
+    Demo(
+        "openai_mcp_security",
+        "OpenAI Agents SDK — MCP security scanner/gateway smoke",
+        "showcase",
+        "Seam: OpenAI Agent configured; MCP tools pre-scanned and gated before runtime use.",
+        "openai_mcp_security_agent",
+    ),
+    Demo(
+        "claude_mcp_security",
+        "Claude Agent SDK — MCP security scanner/gateway smoke",
+        "showcase",
+        "Seam: ClaudeAgentOptions configured; MCP tools pre-scanned and gated before runtime use.",
+        "claude_mcp_security_agent",
+    ),
+    Demo(
+        "maf_mcp_security",
+        "Microsoft Agent Framework — MCP security scanner/gateway smoke",
+        "showcase",
+        "Seam: MAF Agent middleware configured; MCP tools pre-scanned and gated before runtime use.",
+        "maf_mcp_security_agent",
+    ),
 ]
 
 

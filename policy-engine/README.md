@@ -100,3 +100,24 @@ Google ADK has two examples in this checkout:
 `policy_engine_demos/google_adk_callbacks_governed.py` is deterministic and
 does not require a live model; `policy_engine_hello_world_multi_real/google_adk_agent.py`
 uses a live ADK `LlmAgent`/`InMemoryRunner` and requires Google credentials.
+
+## Related MCP Security Tooling
+
+The sibling `mcp-security-scanner/` package handles MCP-specific supply-chain
+checks and runtime gateway enforcement. It scans tool definitions for poisoning,
+typosquatting, hidden instructions, schema abuse, and rug-pull changes, then
+uses `policy-engine` as the PDP for MCP tool-call gateway decisions.
+
+The sibling `prompt-injection/` package handles prompt-injection and untrusted
+content defenses, including prompt scans, MCP response scans, message signing,
+CVE checks, and optional LlamaFirewall chaining. It is standalone and does not
+depend on Agent-OS.
+
+The sibling `human-loop/` package handles human approval gates, RBAC role
+checks, kill-switch controls, and reversibility checks for irreversible actions.
+It is standalone and does not depend on Agent-OS.
+
+The sibling `runaway-cost/` package handles rate limits, retry limits,
+token/cost/tool-call budgets, timeouts, circuit breakers, and cascade detection
+for runaway agent retries and spending. It is standalone and stdlib-only at
+runtime.

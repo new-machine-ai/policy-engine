@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcp-security-scanner"
+version = "0.1.0"
+description = "MCP tool-definition scanner and runtime gateway backed by policy-engine."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Agent Governance Toolkit" }]
+dependencies = ["policy-engine>=0.1.0"]
+
+[project.optional-dependencies]
+yaml = ["PyYAML>=6"]
+test = ["pytest>=7"]
+
+[project.scripts]
+mcp-security-scan = "mcp_security_scanner.cli:main"
+mcp-scan = "mcp_security_scanner.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
