@@ -17,6 +17,7 @@ def audit(
     reason: str | None = None,
     tool_name: str | None = None,
     payload_hash: str | None = None,
+    payload_summary: str | None = None,
 ) -> None:
     if decision is not None:
         policy = policy or getattr(decision, "policy", None)
@@ -39,6 +40,8 @@ def audit(
         record["tool_name"] = tool_name
     if payload_hash:
         record["payload_hash"] = payload_hash
+    if payload_summary:
+        record["payload_summary"] = payload_summary
 
     AUDIT.append(record)
     print(f"gov[{framework}:{phase}] {status}" + (f" - {detail}" if detail else ""))

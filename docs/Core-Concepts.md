@@ -11,7 +11,11 @@ Every adapter ultimately routes through this method. The check order is fixed:
 3. `tool_name not in policy.allowed_tools` (if set) → BLOCKED `("tool_not_allowed:<name>")`
 4. `policy.require_human_approval` → BLOCKED `("human_approval_required")`
 5. `policy.matches_pattern(payload) is not None` → BLOCKED `("blocked_pattern:<pattern>")`
-6. otherwise: `ctx.call_count += 1` → ALLOWED
+6. `ctx.rate_bucket.consume()` returns False → BLOCKED `("rate_limited:wait_<s>s")`
+7. otherwise: `ctx.call_count += 1` → ALLOWED
+
+Denied calls (steps 1–5) do **not** spend rate-limit tokens; only calls
+that would otherwise be allowed do.
 
 Two entry points:
 
@@ -27,13 +31,27 @@ BaseKernel.pre_execute(ctx, payload: str) -> tuple[bool, str | None]   # thin wr
 ```python
 GovernancePolicy(
     name: str,
-    blocked_patterns: list[str] = [],          # case-insensitive substring match
-    max_tool_calls: int = sys.maxsize,
+    blocked_patterns: list[str] = [],          # match style controlled by pattern_engine
+    max_tool_calls: int = 10,                  # lifetime cap per ExecutionContext
     require_human_approval: bool = False,
     allowed_tools: list[str] | None = None,    # None = no allowlist enforced
     blocked_tools: list[str] | None = None,    # None = no denylist
+    pattern_engine: Literal["substring", "regex"] = "substring",
+    rate_limit: RateLimitConfig | None = None, # token-bucket; refilling rate cap
+    audit_payload_summary: int = 0,            # 0 = off; >0 hints callers to truncate
 )
 ```
+
+`pattern_engine="regex"` switches `matches_pattern` to
+`re.search(..., flags=re.IGNORECASE)` so patterns like `\bssn\b` or
+`DROP\s+TABLE` work; the default keeps the original case-insensitive
+substring matcher so existing demos are unaffected.
+
+`rate_limit=RateLimitConfig(capacity=N, refill_rate=R)` adds a
+thread-safe token bucket per `ExecutionContext`. Denied calls do not
+spend tokens; only calls that would otherwise pass do. See
+[[Gap-vs-Agent-OS]] for the algorithmic match against
+`agent_os.policies.rate_limiting`.
 
 ## Adapter patterns
 

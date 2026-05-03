@@ -15,6 +15,8 @@
 - [[Core-Concepts]] — how `BaseKernel.evaluate` works and the four adapter patterns
 - [[Seam-Taxonomy]] — at-a-glance comparison of where each adapter plugs in
 - [[Adapter-API-Shape]] — why each SDK gets a different noun in `kernel.governed_<noun>(...)`
+- [[Naming-Conventions]] — plain-English walkthrough of `governed_<noun>` vs `as_<noun>`
+- [[Demos]] — every runnable demo across the three folders, with seams and credentials
 - [[MCP-Security-Scanner]] — sibling package for MCP tool-definition scanning and runtime gateway checks
 - [[Multi-Agent-Drift]] — sibling package for context budgets, drift, handoff safety, vector clocks, and saga fan-out
 - [[Prompt-Injection]] — sibling package for prompt-injection and untrusted-content defenses
@@ -37,4 +39,4 @@
 
 ## Layout
 
-Each Python adapter lives at `policy-engine/src/policy_engine/adapters/<name>.py` and has a matching demo at `policy_engine_demos/<name>_governed.py`. The shared rulebook used by `run_all.py` is defined once in `policy_engine_demos/_shared.py` as `POLICY`.
+Each Python adapter lives at `policy-engine/src/policy_engine/adapters/<name>.py`. Canonical examples live in `policy_engine_hello_world_multi_real_consolidated/`, which combines compact live hello-world demos with broader showcase/deep-dive demos. The original `policy_engine_hello_world_multi_real/` folder remains as a preserved reference copy. The shared rulebook used by `run_all.py` is defined once in `policy_engine_hello_world_multi_real_consolidated/_shared.py` as `POLICY`.

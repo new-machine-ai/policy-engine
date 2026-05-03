@@ -4,10 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repo layout
 
-Two sibling trees at the root, plus a wiki-style `docs/` directory:
+Example and package trees at the root:
 
 - `policy-engine/` — the Python installable package (`pyproject.toml`, `src/policy_engine/`, `tests/`). Pure-stdlib core; per-framework adapters live in `src/policy_engine/adapters/` and lazily import their framework dep.
-- `policy_engine_demos/` — one quickstart per supported framework, plus `run_all.py`, `_shared.py`, `governance_showcase.py`, and `claude_all_hooks.py`. Demos import the package (not vendored copies).
+- `policy_engine_hello_world_multi_real_consolidated/` — canonical examples: compact live hello-world demos plus migrated showcase/deep-dive demos, with `run_all.py`, `_shared.py`, `governance_showcase.py`, and `claude_all_hooks.py`.
+- `policy_engine_hello_world_multi_real/` — preserved original hello-world samples. Do not edit unless explicitly asked.
 
 `docs/` holds wiki pages (`Home.md`, `Core-Concepts.md`, one page per adapter, `Seam-Taxonomy.md`, integration plans). Some pages still mention a vendored `agent-os/` tree from earlier commits — that folder has been removed from this checkout, so treat those references as historical until docs/ is reconciled.
 
@@ -27,21 +28,22 @@ python -m pytest tests/test_policy.py::test_pre_execute_blocks_pattern -v   # on
 python -m pytest tests/test_claude_adapter.py -v                            # claude SDK hook factory tests
 ```
 
-Run from `policy_engine_demos/`:
+Run from `policy_engine_hello_world_multi_real_consolidated/`:
 
 ```
-python run_all.py                      # all demos + audit summary
-python run_all.py --list               # list demo keys
-python run_all.py --only agent_os      # optional Agent-OS backend demo
-python run_all.py --only langchain crewai
-python langchain_governed.py           # a single demo
+python run_all.py                              # all consolidated demos + audit summary
+python run_all.py --list                       # list demo keys and profiles
+python run_all.py --profile hello --strict     # compact live smoke suite
+python run_all.py --profile showcase           # broader showcase/deep-dive suite
+python run_all.py --only agent_os              # optional Agent-OS backend demo
+python langchain_agent.py                      # a single compact demo
 ```
 
-`run_all.py` swallows `ImportError` so missing optional deps print `[skip]` rather than abort the run.
+`run_all.py` swallows optional dependency/credential failures by default so they print `[skip]`. Use `--strict` when a live smoke run should fail loudly.
 
 ## How demos resolve `policy_engine` without an install
 
-`policy_engine_demos/_shared.py` walks two candidate `sys.path` entries and uses whichever exists: `<repo_root>/policy-engine/src` (this checkout) and `<repo_root>/../packages/policy-engine/src` (parent monorepo). The first wins, so demos run straight from a fresh checkout without `pip install`. If you ever see `ModuleNotFoundError: policy_engine` from a demo, prefer `pip install -e ./policy-engine` over editing those candidates — the second path is intentionally there for a parent monorepo layout.
+`policy_engine_hello_world_multi_real_consolidated/_shared.py` walks two candidate `sys.path` entries and uses whichever exists: `<repo_root>/policy-engine/src` (this checkout) and `<repo_root>/../packages/policy-engine/src` (parent monorepo). The first wins, so demos run straight from a fresh checkout without `pip install`. If you ever see `ModuleNotFoundError: policy_engine` from a demo, prefer `pip install -e ./policy-engine` over editing those candidates — the second path is intentionally there for a parent monorepo layout.
 
 ## Architecture
 
@@ -72,7 +74,7 @@ When adding a new adapter, pick the pattern that matches the target framework's 
 
 - Every demo is a `main()` (sync or async) that `run_all.py` discovers by name.
 - Demos print step-by-step progress via `_shared.step(framework, msg)` and record decisions via `_shared.audit(...)` so the final unified audit trail in `run_all.py` shows the same `POLICY` enforced across all frameworks plus the optional Agent-OS backend demo.
-- The shared `POLICY` is defined once in `_shared.py` (`blocked_patterns=["DROP TABLE", "rm -rf", "ignore previous instructions", "reveal system prompt", "<system>"]`, `max_tool_calls=10`, `blocked_tools=["shell_exec", "network_request", "file_write"]`) — don't redefine it per demo unless the adapter needs extra fields (see `openai_agents_sdk_governed.py`, which adds `allowed_tools`).
+- The shared `POLICY` is defined once in `_shared.py` (`blocked_patterns=["DROP TABLE", "rm -rf", "ignore previous instructions", "reveal system prompt", "<system>"]`, `max_tool_calls=10`, `blocked_tools=["shell_exec", "network_request", "file_write"]`). Compact hello demos may use the named hello policies from `_shared.py` when they need a smaller live-smoke policy.
 - `claude_governed.py` and `claude_all_hooks.py` **cannot be run from inside another Claude Code session** — the Claude Agent SDK rejects nested sessions. Run them from a plain shell with `CLAUDECODE` unset.
 - Several demos require `OPENAI_API_KEY` and self-skip with a printed message when it's missing.
 

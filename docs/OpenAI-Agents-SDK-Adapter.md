@@ -1,7 +1,7 @@
 # OpenAI Agents SDK
 
 **Source:** `policy-engine/src/policy_engine/adapters/openai_agents.py`
-**Demo:** `policy_engine_demos/openai_agents_sdk_governed.py`
+**Demo:** `policy_engine_hello_world_multi_real_consolidated/openai_agent.py`
 
 ## Seam
 

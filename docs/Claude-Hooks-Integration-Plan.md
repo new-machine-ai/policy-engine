@@ -159,7 +159,7 @@ Concrete cases:
 5. `test_permission_request_async_approval_path` — `escalator.request_approval` stub returns `EscalationDecision(outcome=APPROVED)`; hook returns `{"hookSpecificOutput": {…, "permissionDecision": "allow"}}`. Cover deny + timeout cases too.
 6. `test_notification_fan_out_to_webhook` — `webhook.notify_async` stub; assert called with a `WebhookEvent`-shaped dict.
 
-### Add — `policy_engine_demos/claude_bridges_demo.py`
+### Add — `policy_engine_hello_world_multi_real_consolidated/claude_bridges_demo.py`
 
 A new demo (registered as `claude_bridges` in `run_all.py`) that mirrors `claude_governed.py`'s six-phase shape but adds:
 
@@ -168,11 +168,11 @@ A new demo (registered as `claude_bridges` in `run_all.py`) that mirrors `claude
 
 Self-skips like `claude_governed.py` does: missing `CLAUDECODE`, missing SDK, missing auth, missing agent-os.
 
-### Modify — `policy_engine_demos/_shared.py`
+### Modify — `policy_engine_hello_world_multi_real_consolidated/_shared.py`
 
 Optional small helper `agent_os_optional()` that imports agent-os and returns `None` on `ImportError`, so multiple bridge demos can share one import dance.
 
-### Modify — `policy_engine_demos/run_all.py`
+### Modify — `policy_engine_hello_world_multi_real_consolidated/run_all.py`
 
 Register `claude_bridges` after the `claude` entry. Use the same skip pattern.
 
@@ -250,7 +250,7 @@ return ("UNKNOWN_ERROR", "medium")
 
 3. **Bridge demo skip path:**
    ```
-   python policy_engine_demos/run_all.py --only claude_bridges
+   python policy_engine_hello_world_multi_real_consolidated/run_all.py --only claude_bridges
    ```
    Without `claude-agent-sdk` → `[skip] missing dependency`. Without `CLAUDECODE` unset → demo runs.
 
@@ -262,7 +262,7 @@ return ("UNKNOWN_ERROR", "medium")
 
 5. **Cross-check with the unified summary:**
    ```
-   python policy_engine_demos/run_all.py
+   python policy_engine_hello_world_multi_real_consolidated/run_all.py
    ```
    Total `claude` rows in the audit trail = (UserPromptSubmit + PreToolUse + PostToolUse from `claude_governed`) + 7 bridge phases from `claude_bridges_demo`. No other framework's row count changes.
 

@@ -2,6 +2,7 @@
 
 from policy_engine.context import ExecutionContext
 from policy_engine.policy import GovernancePolicy, PolicyDecision, PolicyRequest
+from policy_engine.rate_limit import TokenBucket
 
 
 class BaseKernel:
@@ -12,7 +13,12 @@ class BaseKernel:
         self.policy = policy
 
     def create_context(self, name: str) -> ExecutionContext:
-        return ExecutionContext(name=name, policy=self.policy)
+        bucket = (
+            TokenBucket.from_config(self.policy.rate_limit)
+            if self.policy.rate_limit is not None
+            else None
+        )
+        return ExecutionContext(name=name, policy=self.policy, rate_bucket=bucket)
 
     def evaluate(
         self, ctx: ExecutionContext, request: PolicyRequest | str
@@ -66,6 +72,10 @@ class BaseKernel:
         matched = self.policy.matches_pattern(payload)
         if matched is not None:
             return decision(False, f"blocked_pattern:{matched}", matched_pattern=matched)
+
+        if ctx.rate_bucket is not None and not ctx.rate_bucket.consume():
+            wait = ctx.rate_bucket.time_until_available()
+            return decision(False, f"rate_limited:wait_{wait:.3f}s")
 
         ctx.call_count += 1
         return decision(True)

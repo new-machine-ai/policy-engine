@@ -60,6 +60,13 @@ DEMOS = [
         "claude_agent_sdk_agent",
     ),
     Demo(
+        "google_adk",
+        "Google ADK live hello-world",
+        "hello",
+        "Seam: GoogleADKKernel.as_plugin() in InMemoryRunner(plugins=[...]).",
+        "google_adk_agent",
+    ),
+    Demo(
         "governance",
         "Governance showcase — policy, trust, MCP, lifecycle",
         "showcase",

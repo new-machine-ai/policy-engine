@@ -4,11 +4,12 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 ## Repo layout
 
-Three sibling trees at the root:
+Primary trees at the root:
 
 - `policy-engine/` — the installable package (`pyproject.toml`, `src/policy_engine/`, `tests/`). Pure-stdlib core; per-framework adapters live in `src/policy_engine/adapters/` and lazily import their framework dep.
-- `policy_engine_demos/` — one quickstart per supported framework, plus `run_all.py` and `_shared.py`. Demos import the package (not vendored copies).
-- `agent-os/` — vendored Agent-OS source used by the optional `policy_engine.adapters.agent_os` bridge. Do not import it from the core package path.
+- `policy_engine_hello_world_multi_real_consolidated/` — canonical examples: compact live hello-world demos plus migrated showcase/deep-dive demos, with `run_all.py` and `_shared.py`.
+- `policy_engine_hello_world_multi_real/` — preserved original hello-world samples. Do not edit unless explicitly asked.
+- `docs/` — wiki-style adapter docs and implementation plans.
 
 There is no git repo and no top-level README — each tree is self-describing.
 
@@ -25,26 +26,27 @@ python -m pytest tests/                # run unit tests (core only, no framework
 python -m pytest tests/test_policy.py::test_pre_execute_blocks_pattern -v   # one test
 ```
 
-Run from `policy_engine_demos/`:
+Run from `policy_engine_hello_world_multi_real_consolidated/`:
 
 ```
-python run_all.py                      # all 7 adapter demos + audit summary
+python run_all.py                      # all consolidated demos + audit summary
 python run_all.py --list               # list demo keys
-python run_all.py --only agent_os      # optional Agent-OS backend demo
-python run_all.py --only langchain crewai
-python langchain_governed.py           # a single demo
+python run_all.py --profile hello --strict     # compact live smoke suite
+python run_all.py --profile showcase           # broader showcase/deep-dive suite
+python run_all.py --only agent_os              # optional Agent-OS backend demo
+python langchain_agent.py                      # a single compact demo
 ```
 
-`run_all.py` swallows `ImportError` so missing optional deps print `[skip]` rather than abort the run.
+`run_all.py` swallows optional dependency/credential failures by default so they print `[skip]`. Use `--strict` when a live smoke run should fail loudly.
 
 ## Path gotcha when running demos from this checkout
 
-`policy_engine_demos/_shared.py` injects `<repo_root>/packages/policy-engine/src` onto `sys.path`. That path **does not exist** in this checkout — the package lives at `policy-engine/src`, not under `packages/`. Two ways to make demos resolve `policy_engine`:
+`policy_engine_hello_world_multi_real_consolidated/_shared.py` checks `<repo_root>/policy-engine/src` first, then `<repo_root>/../packages/policy-engine/src` for parent-monorepo layouts. Two ways to make demos resolve `policy_engine`:
 
-1. `pip install -e ./policy-engine` once — demos then import from site-packages and the broken sys.path entry is harmless.
-2. `PYTHONPATH=$(pwd)/policy-engine/src python policy_engine_demos/run_all.py`.
+1. `pip install -e ./policy-engine` once — demos then import from site-packages.
+2. `PYTHONPATH=$(pwd)/policy-engine/src python policy_engine_hello_world_multi_real_consolidated/run_all.py`.
 
-Don't "fix" the `packages/...` path in `_shared.py` without checking — it likely targets a parent monorepo layout.
+Don't remove the `../packages/...` candidate in `_shared.py` without checking — it targets a parent monorepo layout.
 
 ## Architecture
 
@@ -74,8 +76,8 @@ When adding a new adapter, pick the pattern that matches the target framework's 
 ## Demo conventions
 
 - Every demo is a `main()` (sync or async) that `run_all.py` discovers by name.
-- Demos print step-by-step progress via `_shared.step(framework, msg)` and record decisions via `_shared.audit(...)` so the final unified audit trail in `run_all.py` shows the same `POLICY` enforced across all seven frameworks and optional backend demos.
-- The shared `POLICY` (`blocked_patterns=["DROP TABLE", "rm -rf"]`, `max_tool_calls=10`) is defined once in `_shared.py` — don't redefine it per demo unless the adapter needs extra fields (see `openai_agents_sdk_governed.py`, which adds `allowed_tools`/`blocked_tools`).
+- Showcase demos print step-by-step progress via `_shared.step(framework, msg)` and record decisions via `_shared.audit(...)` so the final unified audit trail in `run_all.py` shows the same `POLICY` enforced across the supported frameworks and optional backend demos.
+- The shared `POLICY` (`blocked_patterns=["DROP TABLE", "rm -rf"]`, `max_tool_calls=10`) is defined once in `_shared.py`. Compact hello demos may use the named hello policies from `_shared.py` when they need a smaller live-smoke policy.
 - `claude_governed.py` **cannot be run from inside another Codex session** — the Codex Agent SDK rejects nested sessions. Run it from a plain shell with `Codex` unset.
 - Several demos require `OPENAI_API_KEY` and self-skip with a printed message when it's missing.
 

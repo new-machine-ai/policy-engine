@@ -1,7 +1,7 @@
 # OpenAI Assistants
 
 **Source:** `policy-engine/src/policy_engine/adapters/openai_assistants.py`
-**Demo:** `policy_engine_demos/openai_assistants_governed.py`
+**Demo:** `policy_engine_hello_world_multi_real_consolidated/openai_assistants_governed.py`
 
 ## Seam
 

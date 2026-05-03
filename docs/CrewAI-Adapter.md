@@ -1,7 +1,7 @@
 # CrewAI
 
 **Source:** `policy-engine/src/policy_engine/adapters/crewai.py`
-**Demo:** `policy_engine_demos/crewai_governed.py`
+**Demo:** `policy_engine_hello_world_multi_real_consolidated/crewai_governed.py`
 
 ## Seam
 

@@ -106,17 +106,17 @@ A handler returning `PolicyDecision(allowed=False, ...)` short-circuits the bus 
 
 ### Demos / docs
 
-- `policy_engine_demos/_shared.py` — add `bus = EventBus()` to the shared module so the per-framework demos all share one fan-out.
-- `policy_engine_demos/governance_showcase.py` — extend the existing showcase to print "events emitted: X" alongside the policy decisions, demonstrating the fan-out story.
-- New `policy_engine_demos/canonical_events_demo.py` — one shared policy class that subscribes to `tool.proposed`, run across all 8 adapters in sequence, showing the same handler firing on every framework that emits the event.
+- `policy_engine_hello_world_multi_real_consolidated/_shared.py` — add `bus = EventBus()` to the shared module so the per-framework demos all share one fan-out.
+- `policy_engine_hello_world_multi_real_consolidated/governance_showcase.py` — extend the existing showcase to print "events emitted: X" alongside the policy decisions, demonstrating the fan-out story.
+- New `policy_engine_hello_world_multi_real_consolidated/canonical_events_demo.py` — one shared policy class that subscribes to `tool.proposed`, run across all adapters in sequence, showing the same handler firing on every framework that emits the event.
 - [[Seam-Taxonomy]] already exists as a per-adapter table — extend it with a "Canonical event coverage" column matching the survey table above.
 - `CLAUDE.md` Architecture section — replace the four-pattern adapter table with a "translates which native hooks → which canonical events" table once migration is complete.
 
 ## Verification
 
 1. **Unit:** `pytest policy-engine/tests/test_events.py policy-engine/tests/test_policy.py policy-engine/tests/test_claude_adapter.py` — bus fanout, gate short-circuit, error isolation, plus existing tests pass unchanged.
-2. **Behavioral parity (per adapter PR):** Before merging an adapter migration, snapshot today's `AUDIT` from `python policy_engine_demos/<framework>_governed.py`, then re-run after the change. The `(framework, phase, status, detail)` tuples must match (the legacy subscriber preserves them). Diff with `diff <(python ... | grep AUDIT) <(...)`.
-3. **Cross-framework demo:** `python policy_engine_demos/canonical_events_demo.py` should show one policy class catching `tool.proposed` events from at least Claude, MAF, and Agent-OS in a single run with consistent payload shape.
+2. **Behavioral parity (per adapter PR):** Before merging an adapter migration, snapshot today's `AUDIT` from `python policy_engine_hello_world_multi_real_consolidated/run_all.py --only <demo-key>`, then re-run after the change. The `(framework, phase, status, detail)` tuples must match (the legacy subscriber preserves them). Diff with `diff <(python ... | grep AUDIT) <(...)`.
+3. **Cross-framework demo:** `python policy_engine_hello_world_multi_real_consolidated/canonical_events_demo.py` should show one policy class catching `tool.proposed` events from at least Claude, MAF, and Agent-OS in a single run with consistent payload shape.
 4. **Coverage matrix doc:** [[Seam-Taxonomy]] updated row-by-row as each adapter ships; the table is the migration tracker.
 
 ## Critical files

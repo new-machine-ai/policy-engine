@@ -1,7 +1,7 @@
 # Claude Agent SDK
 
 **Source:** `policy-engine/src/policy_engine/adapters/claude.py`
-**Demo:** `policy_engine_demos/claude_governed.py`
+**Demo:** `policy_engine_hello_world_multi_real_consolidated/claude_governed.py`
 
 > ⚠️ The demo cannot be run from inside a Claude Code session — the SDK refuses nested sessions. Run from a regular shell with `CLAUDECODE` unset.
 
